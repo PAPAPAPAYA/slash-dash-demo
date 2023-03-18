@@ -596,7 +596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   extentionMultiplyer: 0.8
   myImage: {fileID: 800484189}
-  maxScaleY: 3
+  maxScaleY: 2.5
   chargePower: 1.8
 --- !u!1 &490927175
 GameObject:
@@ -755,7 +755,7 @@ Camera:
   far clip plane: 1000
   field of view: 44.5
   orthographic: 1
-  orthographic size: 4.3
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
