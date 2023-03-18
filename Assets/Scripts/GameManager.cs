@@ -16,8 +16,8 @@ public class GameManager : MonoBehaviour
         forward
     }
     public static GameManager me;
-    [Header("HPs")]
-    public int playerHp; // adjusting this value in the inpector doesn't work, player hp is how many hp indicators the palyer hp displayer has 
+    [HideInInspector]
+    public int playerHp;
     private int ogPlayerHp;
     [Header("SCOREs")]
     public int score;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject restartButton;
     [Header("TESTINGs")]
     public GameMode gameMode;
+    public bool charge;
     private void Awake()
     {
         me = this;
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour
         }
         GameStateOperator();
         GameModeChanger();
+        FeatureToggler();
     }
     public void RestartGame()
     {
@@ -86,6 +88,13 @@ public class GameManager : MonoBehaviour
         {
             gameMode = GameMode.forward;
             InteractionScript.me.DestroySils();
+        }
+    }
+    private void FeatureToggler()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            charge = !charge;
         }
     }
     private void GameStateOperator()

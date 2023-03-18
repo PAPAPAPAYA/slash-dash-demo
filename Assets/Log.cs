@@ -91,11 +91,11 @@
     //! SLINGSHOT
         //x silhouettes
         // charge
-    //! Ӳֱ
+    //! stun after finshing slashing
     //! BULLET
         // consume bullet to slash
         // gaining bullet
-    //! NEW ENEMIE TYPES
+    //! NEW ENEMY TYPES
         // snaker
         // shilder
         // onioner

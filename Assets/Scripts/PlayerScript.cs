@@ -141,6 +141,10 @@ public class PlayerScript : MonoBehaviour
         GameObject psBlood = Instantiate(ps_blood);
         psBlood.transform.position = transform.position;
         hitStun_timer = hitStun_duration;
+        if (GameManager.me.playerHp <= 0)
+        {
+            transform.position = new Vector3(CamHolderScript.me.transform.position.x, CamHolderScript.me.transform.position.y, 0);
+        }
     }
     #region HIT VFXs
     IEnumerator HitFlash()
