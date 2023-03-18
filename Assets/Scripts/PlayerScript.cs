@@ -25,7 +25,6 @@ public class PlayerScript : MonoBehaviour
     public GameObject shadowPlayer;
     public Vector3 rotSpd;
     public Vector3 rotSpd_current;
-    public float warmUp_spd;
     private Vector3 rotVelocity;
     public float warmUp_smoothTime;
     [Header("HITs")]

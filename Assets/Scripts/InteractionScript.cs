@@ -16,12 +16,13 @@ public class InteractionScript: MonoBehaviour
     Vector3 mouseDown_pos;
     Vector3 mouseCurrent_pos;
     Vector3 mouseDir;
-    float mouseDrag_time;
+    [HideInInspector]
+    public float mouseDrag_time;
+    public float mouseDrag_maxTime;
     [HideInInspector]
     public bool dragging = false;
     [Header("SILHOUETTEs")]
     public int sil_amount;
-    public float mouseDrag_maxTime;
     public GameObject sil_prefab;
     public float sil_baseDis;
     public List<GameObject> sils;

@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     [Header("TESTINGs")]
     public GameMode gameMode;
     public bool charge;
+    public bool enemyBoost;
     private void Awake()
     {
         me = this;
@@ -95,6 +96,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             charge = !charge;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            enemyBoost = !enemyBoost;
         }
     }
     private void GameStateOperator()

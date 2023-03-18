@@ -86,11 +86,11 @@
         // slow down when turning
     //x make scores less obvious
 // DEBUG
-    //x fix restart
+    // fix restart
 // FEATURES
-    //! SLINGSHOT
+    //x SLINGSHOT
         //x silhouettes
-        // charge
+        //x charge
     //! stun after finshing slashing
     //! BULLET
         // consume bullet to slash
@@ -99,6 +99,8 @@
         // snaker
         // shilder
         // onioner
+// MAINTENANCE
+    // clean up
 // JUICE
     //x warm up rotation
     

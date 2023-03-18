@@ -573,7 +573,7 @@ Transform:
   m_GameObject: {fileID: 466908255}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.45, y: 7.1, z: 1}
+  m_LocalScale: {x: 1.4, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 800484187}
@@ -594,8 +594,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcba7ef699d71694dbdf9c3c662d7ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  extentionMultiplyer: 1
+  extentionMultiplyer: 0.8
   myImage: {fileID: 800484189}
+  maxScaleY: 3
+  chargePower: 1.8
 --- !u!1 &490927175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1526,9 +1528,10 @@ MonoBehaviour:
   slashPath: {fileID: 466908255}
   imageSlashPath: {fileID: 800484185}
   player: {fileID: 1946519924}
+  mouseDrag_time: 0
+  mouseDrag_maxTime: 0.75
   dragging: 0
   sil_amount: 4
-  mouseDrag_maxTime: 0.1
   sil_prefab: {fileID: 4550676032298046204, guid: b41cd742e3958a146a73bf8aabcb4422, type: 3}
   sil_baseDis: 0.2
   sils: []
@@ -2024,6 +2027,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   extentionMultiplyer: 1
   myImage: {fileID: 1691170772}
+  maxScaleY: 0
+  chargePower: 0
 --- !u!1001 &1326104590
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2749,6 +2754,9 @@ MonoBehaviour:
   gameState: 0
   gameOverThingys: {fileID: 885502084}
   restartButton: {fileID: 1446930176949583029}
+  gameMode: 0
+  charge: 1
+  enemyBoost: 1
 --- !u!1 &1900504034
 GameObject:
   m_ObjectHideFlags: 0
@@ -3065,8 +3073,7 @@ MonoBehaviour:
   shadowPlayer: {fileID: 295431979}
   rotSpd: {x: 0, y: 0, z: 4000}
   rotSpd_current: {x: 0, y: 0, z: 0}
-  warmUp_spd: 0
-  warmUp_smoothTime: 0.3
+  warmUp_smoothTime: 1
   hitStop_duration: 0.1
   hitBox: {fileID: 1946519926}
   flashDuration: 0.5
