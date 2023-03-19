@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class SlashPathCollisionScript : MonoBehaviour
 {
-    public static SlashPathCollisionScript me;
     public bool validity;
     public Material matValid;
     public Material matInvalid;
     private List<GameObject> enemiesInMe;
-    
+    #region SINGLETON
+    public static SlashPathCollisionScript me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void Start()
     {
         enemiesInMe = new();
@@ -22,9 +23,8 @@ public class SlashPathCollisionScript : MonoBehaviour
     {
         validity = enemiesInMe.Count > 0;
         GetComponent<SpriteRenderer>().material = validity ? matValid : matInvalid;
-        
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) // record slashables inside the slash path
     {
         if (collision.CompareTag("Enemy") ||
             collision.CompareTag("Bullet"))
@@ -32,7 +32,7 @@ public class SlashPathCollisionScript : MonoBehaviour
             enemiesInMe.Add(collision.gameObject);
         }
     }
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision) // take out enemies that exits the slash path
     {
         if (collision.CompareTag("Enemy") ||
             collision.CompareTag("Bullet"))
@@ -40,7 +40,7 @@ public class SlashPathCollisionScript : MonoBehaviour
             enemiesInMe.Remove(collision.gameObject);
         }
     }
-    public int HowManyEnemiesIHit()
+    public int HowManyEnemiesIHit() // return enemies inside the slash path
     {
         return enemiesInMe.Count;
     }

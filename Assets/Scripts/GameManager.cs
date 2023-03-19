@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
         slingshot,
         forward
     }
-    public static GameManager me;
     [HideInInspector]
     public int playerHp;
     private int ogPlayerHp;
@@ -36,10 +35,13 @@ public class GameManager : MonoBehaviour
     public GameMode gameMode;
     public bool charge;
     public bool enemyBoost;
+    #region SINGLETON
+    public static GameManager me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void Start()
     {
         playerHp = PlayerHpDisplayScript.me.player_HpIndicators.Count;
@@ -49,8 +51,8 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        scoreDisplay.GetComponent<TextMeshPro>().text = score+"";
-        if (playerHp <= 0)
+        scoreDisplay.GetComponent<TextMeshPro>().text = score+""; // disply scores
+        if (playerHp <= 0) // change the game state to over when player has no hp
         {
             gameState = GameState.over;
         }
@@ -58,7 +60,7 @@ public class GameManager : MonoBehaviour
         GameModeChanger();
         FeatureToggler();
     }
-    public void RestartGame()
+    public void RestartGame() // called in enemy script, used by restart button
     {
         // create enemy spawner
         SpawnEnemySpawner();
@@ -70,7 +72,7 @@ public class GameManager : MonoBehaviour
         // reset score
         score = 0;
     }
-    private void SpawnEnemySpawner()
+    private void SpawnEnemySpawner() // called when RestartGame(), spawn an enemy spawner
     {
         if (enemySpawner == null)
         {
@@ -78,7 +80,7 @@ public class GameManager : MonoBehaviour
             enemySpawner.transform.SetParent(camHolder.transform);
         }
     }
-    private void GameModeChanger()
+    private void GameModeChanger() // change modes(features that can't exist at the same time)
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -90,8 +92,8 @@ public class GameManager : MonoBehaviour
             gameMode = GameMode.forward;
             InteractionScript.me.DestroySils();
         }
-    }
-    private void FeatureToggler()
+    } 
+    private void FeatureToggler() // toggle features
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -102,7 +104,7 @@ public class GameManager : MonoBehaviour
             enemyBoost = !enemyBoost;
         }
     }
-    private void GameStateOperator()
+    private void GameStateOperator() // called every frame, do things based on current game state
     {
         switch (gameState)
         {
@@ -122,5 +124,5 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
-    }
+    } 
 }

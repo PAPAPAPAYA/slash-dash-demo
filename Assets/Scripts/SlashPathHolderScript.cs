@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class SlashPathHolderScript : MonoBehaviour
 {
-    public float extentionMultiplyer;
-    private float baseScaleY;
     public SlashPathCollisionScript myImage;
+    private float baseScaleY;
+    [Header("ENEMY BOOSTs")]
+    public float extentionMultiplyer;
+    [Header("CHARGEs")]
     public float maxScaleY;
     public float chargePower;
     private void Start()
     {
-        baseScaleY = transform.localScale.y;
+        baseScaleY = transform.localScale.y; // get initial scale.y
     }
     private void Update()
     {
+        // change scale.y
         transform.localScale = new Vector3(transform.localScale.x,
                 baseScaleY + ReturnLength2Add_enemyBoost() + ReturnLength2Add_charge(),
                 1);
     }
-    private float ReturnLength2Add_enemyBoost()
+    private float ReturnLength2Add_enemyBoost() // calculate and return scaleY to add based on enemies inside the slash path
     {
         if (GameManager.me.enemyBoost)
         {
@@ -27,7 +30,7 @@ public class SlashPathHolderScript : MonoBehaviour
         }
         return 0f;
     }
-    private float ReturnLength2Add_charge()
+    private float ReturnLength2Add_charge() // calculate and return scaleY to add based on drag time
     {
         if (GameManager.me.charge)
         {

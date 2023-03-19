@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    public static CameraScript me;
     [Header("CAM SHAKEs")]
     public MilkShake.Shaker camShaker;
     public MilkShake.ShakePreset enemyHit;
@@ -14,10 +13,13 @@ public class CameraScript : MonoBehaviour
     private float ogSize;
     public float enlargeMultiplyer;
     public float enlargeSpd;
+    #region SINGLETON
+    public static CameraScript me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void Start()
     {
         ogSize = GetComponent<Camera>().orthographicSize;

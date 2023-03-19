@@ -61,7 +61,7 @@ public class EnemyScript : MonoBehaviour
     {
         //!UpdateHpIndicator();
         MoveLogic();
-        if (spawn_iFrame > 0)
+        if (spawn_iFrame > 0) // i-frames when spawned so that it won't get killed the moment it is spanwed
         {
             spawn_iFrame -= Time.deltaTime;
         }
@@ -73,10 +73,6 @@ public class EnemyScript : MonoBehaviour
             if (myEnemyType == EnemyType.score)
             {
                 Destroy(gameObject);
-            }
-            else if (myEnemyType == EnemyType.restart)
-            {
-
             }
             else
             {

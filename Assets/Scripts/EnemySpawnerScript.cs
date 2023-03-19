@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemySpawnerScript : MonoBehaviour
 {
-    public static EnemySpawnerScript me;
     public List<GameObject> enemyPrefabs;
     public float spawnRadius;
     [Header("SPAWN AMOUNTs")]
@@ -15,20 +14,23 @@ public class EnemySpawnerScript : MonoBehaviour
     public float spawnInterval_start;
     public float spawnInterval_decreaseRate;
     private float spawnTimer;
+    #region SINGLETON
+    public static EnemySpawnerScript me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void Update()
     {
-        if (spawnTimer > 0)
+        if (spawnTimer > 0) // spawn cd
         {
             spawnTimer -= Time.deltaTime;
         }
         else
         {
             spawnTimer = spawnInterval_start;
-            for (int i = 0; i < spawnAmount; i++)
+            for (int i = 0; i < spawnAmount; i++) // when CDed, spawn one enemy
             {
                 SpawnOne();
             }

@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class KnockBackAreaScript : MonoBehaviour
 {
-    public static KnockBackAreaScript me;
     public float knockback_amount;
     public float knockBack_amount_weak;
     public List<GameObject> enemiesInArea;
+    #region SINGLETON
+    public static KnockBackAreaScript me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy") ||

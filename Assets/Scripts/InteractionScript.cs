@@ -6,7 +6,6 @@ using UnityEngine.UI;
 //! this script is for implementing mouse interaction
 public class InteractionScript: MonoBehaviour
 {
-    public static InteractionScript me;
     [Header("REFs")]
     public GameObject aimArea;
     public GameObject slashPath;
@@ -29,11 +28,13 @@ public class InteractionScript: MonoBehaviour
     public float sil_returnSpd;
     public float sil_disMultiplyer;
     private float time2ReachPlayer;
+    #region SINGLETON
+    public static InteractionScript me;
     private void Awake()
     {
         me = this;
     }
-
+    #endregion
     private void Start()
     {
         mouseCurrent_pos = new();
@@ -42,7 +43,6 @@ public class InteractionScript: MonoBehaviour
         dragging = false;
         MakeSils();
     }
-
     private void Update()
     {
         mouseDir = (mouseCurrent_pos - mouseDown_pos).normalized; // calculate direction between initial point and current point
@@ -104,7 +104,7 @@ public class InteractionScript: MonoBehaviour
         B4ReturnSils(); 
     }
     #region SILHOUETTE
-    private void ReleaseSilhouette()
+    private void ReleaseSilhouette() // release the sils when mouse dragging
     {
         if(GameManager.me.gameMode== GameManager.GameMode.slingshot)
         {
@@ -117,7 +117,7 @@ public class InteractionScript: MonoBehaviour
             }
         }
     }
-    private void CollectSilhouette()
+    private void CollectSilhouette() // return the sils when mouse released
     {
         if (GameManager.me.gameMode == GameManager.GameMode.slingshot)
         {

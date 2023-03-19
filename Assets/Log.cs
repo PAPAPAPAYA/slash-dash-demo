@@ -97,10 +97,10 @@
         // gaining bullet
     //! NEW ENEMY TYPES
         // snaker
-        // shilder
+        // shielder
         // onioner
 // MAINTENANCE
-    // clean up
+    //x clean up
 // JUICE
     //x warm up rotation
     

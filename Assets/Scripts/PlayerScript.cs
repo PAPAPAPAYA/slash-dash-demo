@@ -5,7 +5,6 @@ using UnityEngine;
 //! this script stores player functions
 public class PlayerScript : MonoBehaviour
 {
-    public static PlayerScript me;
     [Header("BASICs")]
     public int atk;
     [Header("SLASHes")]
@@ -41,11 +40,13 @@ public class PlayerScript : MonoBehaviour
     [Header("FOR PLAYTESTs")]
     public bool hitBulletTime;
     public bool hitStop;
-
+    #region SINGLETON
+    public static PlayerScript me;
     private void Awake()
     {
         me = this;
     }
+    #endregion
     private void Start()
     {
         ogMat = imagePlayer.GetComponent<SpriteRenderer>().material;
@@ -53,24 +54,24 @@ public class PlayerScript : MonoBehaviour
     }
     private void Update()
     {
-        if (!slashIntiated)
+        if (!slashIntiated) // reset slash target to player pos when not starting to slash
         {
             slashTargetPos = transform.position;
         }
-        transform.position = Vector3.SmoothDamp(transform.position, slashTargetPos, ref velocity, smoothTime);
-        slashing = Vector3.Distance(transform.position, slashTargetPos) > 0.1f;
+        transform.position = Vector3.SmoothDamp(transform.position, slashTargetPos, ref velocity, smoothTime); // actual slash dash
+        slashing = Vector3.Distance(transform.position, slashTargetPos) > 0.1f; // record if in the middle of slashing
         if (slashing)
         {
-            SlashRotate();
+            SlashRotate(); // if slashing, rotate
         }
         else
         {
             slashIntiated = false;
             if (InteractionScript.me.dragging)
             {
-                WarmUp();
+                WarmUp(); // if not slashing but dragging, warm up
             }
-            else
+            else // if not slashing nor dragging, reset everything
             {
                 rotSpd_current = new(0, 0, 0);
                 ReturnRotate();
@@ -87,18 +88,18 @@ public class PlayerScript : MonoBehaviour
             hitStunned = false;
         }
     }
-    private void SlashRotate()
+    private void SlashRotate() // rotate the player image when slashing
     {
         imagePlayer.transform.Rotate(rotSpd * Time.deltaTime);
         shadowPlayer.transform.Rotate(rotSpd * Time.deltaTime);
     }
-    private void ReturnRotate()
+    private void ReturnRotate() // when not slashing rotate player image back
     {
         Quaternion target = Quaternion.Euler(0, 0, 45);
         imagePlayer.transform.rotation = Quaternion.RotateTowards(imagePlayer.transform.rotation, target, Time.deltaTime * -500f);
         shadowPlayer.transform.rotation = Quaternion.RotateTowards(shadowPlayer.transform.rotation, target, Time.deltaTime * -500f);
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) // hit things
     {
         if (slashing)
         {
@@ -130,7 +131,7 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
-    private void GotHit()
+    private void GotHit() // get hurt
     {
         GameManager.me.playerHp--;
         KnockBackAreaScript.me.KnockBackEnemies();
