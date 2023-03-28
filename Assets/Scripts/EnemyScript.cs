@@ -16,12 +16,12 @@ public class EnemyScript : MonoBehaviour
     };
     [Header("BASICs")]
     public int hp;
-    private int maxHp;
     public float moveSpd;
     public float hurt_stunDuration;
     private bool hurt_stunned;
     public float spawn_iFrame;
     public EnemyType myEnemyType;
+    public bool shielded;
     [Header("SLIMERs")]
     public List<GameObject> slimees;
     public float slimee_spawnForce;
@@ -51,7 +51,6 @@ public class EnemyScript : MonoBehaviour
     public bool undying;
     private void Start()
     {
-        maxHp = hp;
         myHpIndicators = new();
         ogMat = myImg.GetComponent<SpriteRenderer>().material;
         shoot_timer = Random.Range(2, shoot_interval);
@@ -73,6 +72,10 @@ public class EnemyScript : MonoBehaviour
             if (myEnemyType == EnemyType.score)
             {
                 Destroy(gameObject);
+            }
+            else if (myEnemyType == EnemyType.restart)
+            {
+
             }
             else
             {

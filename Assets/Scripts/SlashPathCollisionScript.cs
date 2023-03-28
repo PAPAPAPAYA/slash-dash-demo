@@ -24,6 +24,7 @@ public class SlashPathCollisionScript : MonoBehaviour
         validity = enemiesInMe.Count > 0;
         GetComponent<SpriteRenderer>().material = validity ? matValid : matInvalid;
     }
+    
     private void OnTriggerEnter2D(Collider2D collision) // record slashables inside the slash path
     {
         if (collision.CompareTag("Enemy") ||

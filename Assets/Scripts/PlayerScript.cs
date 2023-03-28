@@ -37,7 +37,7 @@ public class PlayerScript : MonoBehaviour
     public float hurt_bulletTime_scale;
     public float hurt_bulletTime_duration;
     public GameObject ps_blood;
-    [Header("FOR PLAYTESTs")]
+    [Header("TESTs")]
     public bool hitBulletTime;
     public bool hitStop;
     #region SINGLETON
@@ -95,9 +95,16 @@ public class PlayerScript : MonoBehaviour
     }
     private void ReturnRotate() // when not slashing rotate player image back
     {
-        Quaternion target = Quaternion.Euler(0, 0, 45);
-        imagePlayer.transform.rotation = Quaternion.RotateTowards(imagePlayer.transform.rotation, target, Time.deltaTime * -500f);
-        shadowPlayer.transform.rotation = Quaternion.RotateTowards(shadowPlayer.transform.rotation, target, Time.deltaTime * -500f);
+        Quaternion currentRot = imagePlayer.transform.rotation;
+        Quaternion targetRot = Quaternion.Euler(0f, 0f, 45f);
+        float angleDiff = Quaternion.Angle(currentRot, targetRot);
+        print(angleDiff);
+        if (Mathf.Abs(angleDiff) < 179.5f)
+        {
+            Quaternion target = Quaternion.Euler(0, 0, 45);
+            imagePlayer.transform.rotation = Quaternion.RotateTowards(imagePlayer.transform.rotation, target, Time.deltaTime * -500f);
+            shadowPlayer.transform.rotation = Quaternion.RotateTowards(shadowPlayer.transform.rotation, target, Time.deltaTime * -500f);
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision) // hit things
     {

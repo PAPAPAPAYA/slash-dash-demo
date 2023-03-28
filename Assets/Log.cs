@@ -86,7 +86,8 @@
         // slow down when turning
     //x make scores less obvious
 // DEBUG
-    // fix restart
+    //x fix restart
+    //x player is constantly rotating
 // FEATURES
     //x SLINGSHOT
         //x silhouettes
@@ -98,9 +99,18 @@
     //! NEW ENEMY TYPES
         // snaker
         // shielder
-        // onioner
+            //x show the shortened path
+            // reflect player
+            //? reflection of slash path
+                //? keep reflectable objects apart!
+        //? onioner
+        // shooter slime
+            //! make slime an upgrade for enemies
 // MAINTENANCE
     //x clean up
 // JUICE
     //x warm up rotation
+    // shake when charging
+    // dust when stopping
+    // dust when starting slash
     

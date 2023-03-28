@@ -31,10 +31,11 @@ public class GameManager : MonoBehaviour
     public GameState gameState;
     public GameObject gameOverThingys;
     public GameObject restartButton;
-    [Header("TESTINGs")]
+    [Header("TESTs")]
     public GameMode gameMode;
     public bool charge;
     public bool enemyBoost;
+    public bool spawnEnemies;
     #region SINGLETON
     public static GameManager me;
     private void Awake()
@@ -74,7 +75,8 @@ public class GameManager : MonoBehaviour
     }
     private void SpawnEnemySpawner() // called when RestartGame(), spawn an enemy spawner
     {
-        if (enemySpawner == null)
+        if (enemySpawner == null &&
+            spawnEnemies)
         {
             enemySpawner = Instantiate(enemySpawner_prefab);
             enemySpawner.transform.SetParent(camHolder.transform);

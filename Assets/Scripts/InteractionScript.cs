@@ -20,6 +20,11 @@ public class InteractionScript: MonoBehaviour
     public float mouseDrag_maxTime;
     [HideInInspector]
     public bool dragging = false;
+    // reflection
+    private Ray2D ray;
+    private Vector2 bouncePos;
+    private float ogBaseScaleY;
+    public GameObject hitPoint;
     [Header("SILHOUETTEs")]
     public int sil_amount;
     public GameObject sil_prefab;
@@ -42,12 +47,13 @@ public class InteractionScript: MonoBehaviour
         time2ReachPlayer = PlayerScript.me.smoothTime;
         dragging = false;
         MakeSils();
+        ogBaseScaleY = slashPath.transform.localScale.y;
     }
     private void Update()
     {
         mouseDir = (mouseCurrent_pos - mouseDown_pos).normalized; // calculate direction between initial point and current point
-        Debug.DrawLine(mouseCurrent_pos, mouseDown_pos); 
-        Debug.DrawLine(slashPath.transform.position, mouseDir + slashPath.transform.position);
+        //Debug.DrawLine(mouseCurrent_pos, mouseDown_pos); 
+        //Debug.DrawLine(slashPath.transform.position, mouseDir + slashPath.transform.position);
         switch (GameManager.me.gameMode) // switch game mode related mechanics
         {
             case GameManager.GameMode.slingshot:
@@ -64,7 +70,45 @@ public class InteractionScript: MonoBehaviour
                 break;
         }
     }
-
+    //private void FixedUpdate()
+    //{
+    //    if (dragging)
+    //    {
+    //        ray = new Ray2D(slashPath.transform.position, slashPath.transform.position - mouseDir);
+    //        LayerMask layer = LayerMask.GetMask("DetectSlashRay");
+    //        RaycastHit2D hit = Physics2D.Raycast(ray.origin,  // origin of raycast
+    //            ray.direction, // raycast direciton
+    //            slashPath.transform.localScale.y / 2 + 1f, // raycast length
+    //            layer); // layer to detect
+            
+    //        if (hit.collider != null)
+    //        {
+    //            SlashPathHolderScript sphs = slashPath.GetComponent<SlashPathHolderScript>();
+    //            hitPoint.transform.position = hit.point;
+    //            bouncePos = hit.point; // record the point the raycast hit
+    //            float targetPathLength = Vector3.Distance(bouncePos, slashPath.transform.position); // get the cropped path length
+    //            float pathLength = slashPath.GetComponent<SpriteRenderer>().bounds.size.y; // get actual y length from renderer's bound
+    //            Vector3 targetScale = slashPath.transform.localScale; // store path's scale
+    //            targetScale.y = targetPathLength * targetScale.y / pathLength; // convert target length to target scale.y
+    //            //print(targetPathLength + " * " + targetScale.y + " / " + pathLength + " = " + targetScale.y);
+    //            slashPath.GetComponent<SlashPathHolderScript>().scaleDifference = slashPath.transform.localScale.y - targetScale.y; // tell slash path holder script the scale.y difference between target scale.y and current scale.y
+    //            slashPath.GetComponent<SlashPathHolderScript>().baseScaleY = targetScale.y;
+                
+    //            Debug.DrawLine(ray.origin, ray.origin + (ray.direction * slashPath.transform.localScale.y / 2).normalized * pathLength, Color.magenta);
+    //            print(slashPath.GetComponent<BoxCollider2D>().size);
+    //            slashPath.GetComponent<SpriteRenderer>().re
+    //        }
+    //        else
+    //        {
+    //            slashPath.GetComponent<SlashPathHolderScript>().scaleDifference = 0;
+    //            slashPath.GetComponent<SlashPathHolderScript>().baseScaleY = ogBaseScaleY;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //slashPath.GetComponent<SlashPathHolderScript>().scaleDifference = 0;
+    //    }
+    //}
     private void OnMouseDrag()
     {
         mouseCurrent_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // convert and store mouse position
