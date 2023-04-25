@@ -22,6 +22,7 @@ public class EnemyScript : MonoBehaviour
     public float spawn_iFrame;
     public EnemyType myEnemyType;
     public bool shielded;
+    public float rotSpd;
     [Header("SLIMERs")]
     public List<GameObject> slimees;
     public float slimee_spawnForce;
@@ -64,7 +65,10 @@ public class EnemyScript : MonoBehaviour
         {
             spawn_iFrame -= Time.deltaTime;
         }
-        FacePlayer();
+        if (!PlayerScript.me.slashing)
+        {
+            FacePlayer();
+        }
         Shoot();
         ControlShadow();
         if (GameManager.me.gameState == GameManager.GameState.over)
@@ -209,7 +213,8 @@ public class EnemyScript : MonoBehaviour
         {
             Vector3 dir = PlayerScript.me.transform.position - transform.position;
             dir = dir.normalized;
-            transform.rotation = Quaternion.LookRotation(Vector3.forward, dir);
+            var targetRot = Quaternion.LookRotation(Vector3.forward, dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotSpd * Time.deltaTime);
         }
     }
     private void MakeHpIndicators()

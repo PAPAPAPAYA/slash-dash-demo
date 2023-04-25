@@ -5,56 +5,80 @@ using UnityEngine;
 public class SlashPathHolderScript : MonoBehaviour
 {
     public SlashPathCollisionScript myImage;
-    [HideInInspector]
+    //[HideInInspector]
     public float baseScaleY;
-    private float ogBaseScaleY;
     [Header("ENEMY BOOSTs")]
-    public float extentionMultiplyer;
+    public float extensionMultiplyer;
+    private float boostBuffer;
     [Header("CHARGEs")]
     public float maxScaleY;
     public float chargePower;
-    // bounce
-    private Ray2D ray;
-    private Ray2D rayL;
-    private Ray2D rayR;
-    private bool rayHit = false;
-    private bool rayHitL = false;
-    private bool rayHitR = false;
-    private bool triggerHit = false;
-    public Transform rayPos_left;
-    public Transform rayPos_right;
+    [Header("REFLECTIONs")]
+    public float ogBaseScaleY;
+    public float extensionFactor;
+    private Ray2D ray; // this ray is for shortening the path when it hits a reflectable object
+    private Ray2D rayLong; // this ray is for calculating the reflection angle
+    private bool rayHit = false; // this tracks if the short ray hits
+    public bool rayHit_long = false; // this tracks if the long ray hits
     public GameObject raycaster; // the game object that casts the rays (so that when the rays r detecting collision they can ignore the caster)
-    private GameObject reflectionObj; // the game object that the refleciton is happening on
+    public GameObject fatherPath_holder; // the path that holds this path
+    public GameObject reflectionObj; // the game object that the refleciton is happening on
     private Vector3 reflectionPoint; // origin of the reflection
-    private Vector3 newPathHolder_Dir;
-    private float scaleDifference;
-    public GameObject newPathHolder_holder;
-    public GameObject newPathHolder;
-    public bool imNew;
+    private Vector3 newPathHolder_Dir; // the direction of this path's path's holder
+    public float scaleDifference; // store the scale difference when path is shrunk, and this scale is applied to this path's path's holder
+    public GameObject pathHolder_holder_prefab; // when reflection happens, if this path doesn't have a child slash path holder, instantiate one
+    public GameObject newPathHolder_holder; // this path's path's holder's holer
+    public GameObject newPathHolder; // this path's path's holder
     private void Start()
     {
+        //print(transform.localScale.y);
         baseScaleY = transform.localScale.y; // get initial scale.y
         ogBaseScaleY = baseScaleY;
     }
     private void Update()
     {
-        ShortenPath();
+        ChangePathLength();
+        Raycasts();
+        if (myImage.gameObject.activeSelf)
+        {
+            if (!ReflectionSlashScript.me.currentlyActivePaths.Contains(gameObject))
+                ReflectionSlashScript.me.currentlyActivePaths.Add(gameObject);
+        }
+        else
+        {
+            if (ReflectionSlashScript.me.currentlyActivePaths.Contains(gameObject))
+                ReflectionSlashScript.me.currentlyActivePaths.Remove(gameObject);
+        }
     }
     private void FixedUpdate()
     {
-        //Raycasts();
+        
+    }
+    private void LateUpdate()
+    {
+        
     }
     private float ReturnLength2Add_enemyBoost() // calculate and return scaleY to add based on enemies inside the slash path
     {
         if (GameManager.me.enemyBoost)
         {
-            return myImage.HowManyEnemiesIHit() * extentionMultiplyer;
+            float targetValue = myImage.HowManyEnemiesIHit() * extensionMultiplyer;
+            if (boostBuffer < targetValue)
+            {
+                boostBuffer = targetValue;
+            }
+            else if (boostBuffer > targetValue)
+            {
+                boostBuffer -= 20 * Time.deltaTime;
+            }
+            return boostBuffer;
         }
         return 0f;
     }
     private float ReturnLength2Add_charge() // calculate and return scaleY to add based on drag time
     {
-        if (GameManager.me.charge)
+        if (GameManager.me.charge
+            && raycaster==null)
         {
             // get the rotio between time hold and time max, that's the ratio between added length and max length
             float length2Add = InteractionScript.me.mouseDrag_time * maxScaleY / InteractionScript.me.mouseDrag_maxTime;
@@ -65,129 +89,127 @@ public class SlashPathHolderScript : MonoBehaviour
     private void Raycasts()
     {
         LayerMask layer = LayerMask.GetMask("DetectSlashRay");
+        float raycastLength = transform.localScale.y / 2f;
+        raycastLength = Mathf.Clamp(raycastLength, 0, float.MaxValue);
         if (InteractionScript.me.dragging)
         {
-            // left ray
-            rayL = new Ray2D(rayPos_left.position, transform.up);
-            RaycastHit2D hitL = Physics2D.Raycast(rayL.origin,  // origin of raycast
-                rayL.direction, // raycast direciton
-                transform.localScale.y / 2f - .1f, // raycast length
-                layer); // layer to detect
-            // left long ray
-            //RaycastHit2D hitL_long = Physics2D.Raycast(rayL.origin,  // origin of raycast
-            //    rayL.direction, // raycast direciton
-            //    transform.localScale.y / 2f, // raycast length
-            //    layer); // layer to detect
-            Debug.DrawLine(rayL.origin, rayL.origin + (rayL.direction * transform.localScale.y / 2), Color.magenta);
-            // right ray
-            rayR = new Ray2D(rayPos_right.position, transform.up);
-            RaycastHit2D hitR = Physics2D.Raycast(rayR.origin,  // origin of raycast
-               rayR.direction, // raycast direciton
-               transform.localScale.y / 2f - .1f, // raycast length
-               layer); // layer to detect
-            Debug.DrawLine(rayR.origin, rayR.origin + (rayR.direction * transform.localScale.y / 2), Color.magenta);
             // center ray
             ray = new Ray2D(transform.position, transform.up);
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin,  // origin of raycast
+            RaycastHit2D[] hits = Physics2D.RaycastAll(ray.origin,  // origin of raycast
                 ray.direction, // raycast direciton
-                transform.localScale.y / 2f - .1f, // raycast length
+                raycastLength - .2f, // raycast length
                 layer); // layer to detect
-            Debug.DrawLine(ray.origin, ray.origin + (ray.direction * transform.localScale.y / 2), Color.magenta);
+            Debug.DrawLine(ray.origin, ray.origin + (ray.direction * transform.localScale.y / 2f), Color.magenta);
+            // center long ray
+            rayLong = new Ray2D(transform.position, transform.up);
+            RaycastHit2D[] hits_long = Physics2D.RaycastAll(rayLong.origin,  // origin of raycast
+                rayLong.direction, // raycast direciton
+                raycastLength + 0f, // raycast length
+                layer); // layer to detect
+            Debug.DrawLine(rayLong.origin, rayLong.origin + (rayLong.direction * transform.localScale.y / 2f), Color.magenta);
             // set ray hit bools
-            if ((hit.collider && hit.collider != raycaster)
-                || raycaster == null)
+            int valid_hit_amount_short = 0;
+            RaycastHit2D valid_hit_short;
+            foreach (var hit in hits)
             {
-                if (hit.collider.GetComponent<EnemyScript>().shielded)
+                if (hit.collider
+                    && hit.collider.GetComponent<EnemyScript>().shielded) // the short ray is for shortening the path
                 {
-                    rayHit = hit.collider;
-                    triggerHit = GetComponentInChildren<BoxCollider2D>().IsTouchingLayers(layer);
+                    if (raycaster == null
+                    || (raycaster != null && hit.collider.gameObject != raycaster))
+                    {
+                        valid_hit_amount_short++;
+                        valid_hit_short = hit;
+                    }
                 }
             }
-            if (hitL.collider && hit.collider != raycaster
-                || raycaster == null)
+            rayHit = valid_hit_amount_short > 0;
+            int valid_hit_amount_long = 0;
+            RaycastHit2D valid_hit_long;
+            foreach (var hit in hits_long)
             {
-                if (hitL.collider.GetComponent<EnemyScript>().shielded)
+                if (hit.collider
+                    && hit.collider.GetComponent<EnemyScript>().shielded) // the long ray is for extending the path(and not adjusting the path), and detecting reflection
                 {
-                    rayHitL = hitL.collider;
-                    triggerHit = GetComponentInChildren<BoxCollider2D>().IsTouchingLayers(layer);
+                    if (raycaster == null
+                    || (raycaster != null && hit.collider.gameObject != raycaster))
+                    {
+                        valid_hit_amount_long++;
+                        valid_hit_long = hit;
+                        reflectionObj = valid_hit_long.collider.gameObject;
+                        reflectionPoint = valid_hit_long.point;
+                        Vector3 normal = valid_hit_long.normal;
+                        newPathHolder_Dir = Vector3.Reflect(rayLong.direction, normal);
+                        if (pathHolder_holder_prefab != null)
+                        {
+                            if (newPathHolder_holder == null)
+                            {
+                                newPathHolder_holder = Instantiate(pathHolder_holder_prefab);
+                                newPathHolder = newPathHolder_holder.GetComponentInChildren<SlashPathHolderScript>().gameObject;
+                                newPathHolder.GetComponent<SlashPathHolderScript>().fatherPath_holder = transform.parent.gameObject;
+                            }
+                            else
+                            {
+                                float newPathHoldersHolder_ScaleY = scaleDifference * extensionFactor;
+                                newPathHoldersHolder_ScaleY = Mathf.Clamp(newPathHoldersHolder_ScaleY, 0.001f, float.MaxValue);
+                                newPathHolder.transform.localScale = new Vector3(1.4f, newPathHoldersHolder_ScaleY, 1);
+                                newPathHolder.GetComponent<SlashPathHolderScript>().ogBaseScaleY = newPathHoldersHolder_ScaleY;
+                                newPathHolder.GetComponent<SlashPathHolderScript>().myImage.gameObject.SetActive(true);
+                                newPathHolder_holder.transform.position = reflectionPoint;
+                                newPathHolder.transform.rotation = Quaternion.LookRotation(Vector3.forward, newPathHolder_Dir);
+                                newPathHolder.GetComponent<SlashPathHolderScript>().raycaster = reflectionObj;
+                            }
+                        }
+                    }
                 }
             }
-            if (hitR.collider && hit.collider != raycaster
-                || raycaster == null)
+            rayHit_long = valid_hit_amount_long > 0;
+            if (fatherPath_holder!=null
+                && (!fatherPath_holder.GetComponentInChildren<SlashPathHolderScript>().rayHit_long
+                || !fatherPath_holder.activeSelf)) // if my father is not rayhit_long
             {
-                if (hitR.collider.GetComponent<EnemyScript>().shielded)
+                myImage.gameObject.SetActive(false); // hide myself
+                if (newPathHolder != null) newPathHolder.GetComponent<SlashPathHolderScript>().myImage.gameObject.SetActive(false); // hide my child path
+            }
+            if (!rayHit_long) // if i'm not rayhit_long
+            {
+                if (newPathHolder != null)
                 {
-                    rayHitR = hitR.collider;
-                    triggerHit = GetComponentInChildren<BoxCollider2D>().IsTouchingLayers(layer);
+                    newPathHolder.GetComponent<SlashPathHolderScript>().rayHit_long = false; // my child path can't be rayhit_long
                 }
             }
-            // get reflection object and point, do it for each raycast
-            /*
-            if (rayHit && hit.collider)
+        }
+        else
+        {
+            if (raycaster!=null
+                || ( fatherPath_holder != null
+                && !fatherPath_holder.activeSelf))
             {
-                reflectionObj = hit.collider.gameObject;
-                reflectionPoint = hit.point;
+                myImage.gameObject.SetActive(false);
             }
-            else if (hitL_long)
-            {
-                reflectionObj = hitL_long.collider.gameObject;
-                reflectionPoint = hitL_long.point;
-                Vector3 normal = hitL_long.normal;
-                newPathHolder_Dir = Vector3.Reflect(ray.direction, normal);
-                if (newPathHolder_holder != null)
-                {
-                    newPathHolder_holder.SetActive(true);
-                    newPathHolder_holder.transform.position = reflectionPoint ;
-                    float newPathHoldersHolder_ScaleY = scaleDifference;
-                    newPathHoldersHolder_ScaleY = Mathf.Clamp(newPathHoldersHolder_ScaleY, 0.01f, float.MaxValue);
-                    newPathHolder.transform.localScale = new Vector3(1.4f, newPathHoldersHolder_ScaleY, 1);
-                    newPathHolder_holder.GetComponentInChildren<SlashPathHolderScript>().imNew = true;
-                    newPathHolder_holder.GetComponentInChildren<SlashPathHolderScript>().raycaster = reflectionObj;
-                }
-            }
-            else if (rayHitR)
-            {
-                reflectionObj = hitR.collider.gameObject;
-                reflectionPoint = hitR.point;
-            }
-            else
-            {
-                if (newPathHolder_holder != null)
-                {
-                    //newPathHolder_holder.SetActive(false);
-                }
-            }*/
         }
     }
-    private void ShortenPath()
+    private void ChangePathLength()
     {
-        if (!imNew)
+        // change scale.y
+        transform.localScale = new Vector3(transform.localScale.x,
+                baseScaleY + ReturnLength2Add_enemyBoost() + ReturnLength2Add_charge(),
+                1);
+        if (rayHit)
         {
-            // change scale.y
-            transform.localScale = new Vector3(transform.localScale.x,
-                    baseScaleY + ReturnLength2Add_enemyBoost() + ReturnLength2Add_charge(),
-                    1);
+            baseScaleY -= 10f * Time.deltaTime;
         }
-        if ((rayHit || rayHitL || rayHitR)
-                && triggerHit)
-            {
-                baseScaleY *= .995f;
-            }
         else if (!rayHit
-            && !rayHitL
-            && !rayHitR
-            && triggerHit)
+            && rayHit_long)
         {
 
         }
         else if (!rayHit
-            && !rayHitL
-            && !rayHitR
-            && !triggerHit)
+            && !rayHit_long)
         {
             if (baseScaleY < ogBaseScaleY)
             {
-                baseScaleY *= 1.009f;
+                baseScaleY += 10f * Time.deltaTime;
             }
             else
             {

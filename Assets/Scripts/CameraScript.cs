@@ -28,6 +28,7 @@ public class CameraScript : MonoBehaviour
     private void Update()
     {
         IncreaseCamSize();
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, 4f, float.MaxValue);
     }
     public void CamShake_EnemyHit()
     {
@@ -40,7 +41,7 @@ public class CameraScript : MonoBehaviour
     public void IncreaseCamSize()
     {
         cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, 
-            ogSize + enlargeMultiplyer * PlayerScript.me.slashPath.transform.localScale.y, 
+            ogSize + enlargeMultiplyer * (PlayerScript.me.slashPath.transform.localScale.y), 
             Time.deltaTime * enlargeSpd) ;
     }
 }

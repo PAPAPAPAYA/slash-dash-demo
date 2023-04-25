@@ -9,12 +9,13 @@ public class PlayerScript : MonoBehaviour
     public int atk;
     [Header("SLASHes")]
     public GameObject endOfPath;
-    public Vector3 slashTargetPos;
+    public Vector3 slashTarget;
     private Vector3 velocity = Vector3.zero;
     public float smoothTime;
     public bool slashing;
     public bool slashIntiated;
     public GameObject slashPath;
+    public int slashesPerformed;
     [Header("HIT STUNs")]
     public float hitStun_duration;
     private float hitStun_timer;
@@ -40,6 +41,7 @@ public class PlayerScript : MonoBehaviour
     [Header("TESTs")]
     public bool hitBulletTime;
     public bool hitStop;
+    public GameObject debugCirc;
     #region SINGLETON
     public static PlayerScript me;
     private void Awake()
@@ -56,15 +58,15 @@ public class PlayerScript : MonoBehaviour
     {
         if (!slashIntiated) // reset slash target to player pos when not starting to slash
         {
-            slashTargetPos = transform.position;
+            slashTarget = transform.position;
         }
-        transform.position = Vector3.SmoothDamp(transform.position, slashTargetPos, ref velocity, smoothTime); // actual slash dash
-        slashing = Vector3.Distance(transform.position, slashTargetPos) > 0.1f; // record if in the middle of slashing
+        SlashDash();
+        slashing = Vector3.Distance(transform.position, slashTarget) > 0.1f; // record if in the middle of slashing
         if (slashing)
         {
             SlashRotate(); // if slashing, rotate
         }
-        else
+        else // if reached slash target pos
         {
             slashIntiated = false;
             if (InteractionScript.me.dragging)
@@ -74,6 +76,7 @@ public class PlayerScript : MonoBehaviour
             else // if not slashing nor dragging, reset everything
             {
                 rotSpd_current = new(0, 0, 0);
+                slashPath.GetComponent<SlashPathHolderScript>().baseScaleY = slashPath.GetComponent<SlashPathHolderScript>().ogBaseScaleY;
                 ReturnRotate();
             }
         }
@@ -88,6 +91,19 @@ public class PlayerScript : MonoBehaviour
             hitStunned = false;
         }
     }
+    private void SlashDash()
+    {
+        if (ReflectionSlashScript.me.targetPoses.Count > 0
+            && !slashing
+            && slashPath.GetComponent<SlashPathHolderScript>().myImage.GetComponent<SlashPathCollisionScript>().valid)
+        {
+            slashIntiated = true;
+            slashTarget = ReflectionSlashScript.me.targetPoses[0];
+            ReflectionSlashScript.me.targetPoses.RemoveAt(0);
+            slashing = true;
+        }
+        transform.position = Vector3.SmoothDamp(transform.position, slashTarget, ref velocity, smoothTime); // actual slash dash
+    }
     private void SlashRotate() // rotate the player image when slashing
     {
         imagePlayer.transform.Rotate(rotSpd * Time.deltaTime);
@@ -98,7 +114,6 @@ public class PlayerScript : MonoBehaviour
         Quaternion currentRot = imagePlayer.transform.rotation;
         Quaternion targetRot = Quaternion.Euler(0f, 0f, 45f);
         float angleDiff = Quaternion.Angle(currentRot, targetRot);
-        print(angleDiff);
         if (Mathf.Abs(angleDiff) < 179.5f)
         {
             Quaternion target = Quaternion.Euler(0, 0, 45);
@@ -124,9 +139,9 @@ public class PlayerScript : MonoBehaviour
         }
         else // not slashing
         {
-            if (collision.CompareTag("Enemy") &&  // got hit by an enemy
-                collision.GetComponent<EnemyScript>().myEnemyType != EnemyScript.EnemyType.score &&
-                hitBox.IsTouching(collision)) // check if the actual hit box got hit and not other colliders
+            if (hitBox.IsTouching(collision) // check if the actual hit box got hit and not other colliders
+                && collision.CompareTag("Enemy")  // got hit by an enemy
+                && collision.GetComponent<EnemyScript>().myEnemyType != EnemyScript.EnemyType.score) 
             {
                 GotHit();
             }
@@ -179,12 +194,12 @@ public class PlayerScript : MonoBehaviour
     }
     IEnumerator HitStop()
     {
-        Vector3 ogTargetPos = slashTargetPos;
-        slashTargetPos = enemyHit.transform.position;
+        Vector3 ogTargetPos = slashTarget;
+        slashTarget = enemyHit.transform.position;
         rotSpd = new(0, 0, 0);
         yield return new WaitForSecondsRealtime(hitStop_duration);
         rotSpd = new(0, 0, 5);
-        slashTargetPos = ogTargetPos;
+        slashTarget = ogTargetPos;
     }
     #endregion
 }
