@@ -18,7 +18,7 @@ public class CamHolderScript : MonoBehaviour
     #endregion
     private void Update()
     {
-        if (GameManager.me.gameState == GameManager.GameState.play) // if playing
+        //if (GameManager.me.gameState == GameManager.GameState.play) // if playing
         {
             camTargetPos_woZ = new(camTarget_wZ.position.x, camTarget_wZ.position.y, -10); // set z
             transform.position = Vector3.SmoothDamp(transform.position, camTargetPos_woZ, ref velocity, smoothTime); // smooth damp it to target pos

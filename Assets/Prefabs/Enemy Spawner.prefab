@@ -53,8 +53,7 @@ MonoBehaviour:
   - {fileID: 5970154702801796565, guid: 4ddeb6e228acd6b4193028450c99852a, type: 3}
   - {fileID: 5970154702801796565, guid: 4ddeb6e228acd6b4193028450c99852a, type: 3}
   - {fileID: 5970154702801796565, guid: 4ddeb6e228acd6b4193028450c99852a, type: 3}
-  - {fileID: 5970154702801796565, guid: 4ddeb6e228acd6b4193028450c99852a, type: 3}
-  - {fileID: 5970154702801796565, guid: 4ddeb6e228acd6b4193028450c99852a, type: 3}
+  - {fileID: 3646002732641093290, guid: 58214713c50cfb646aa47ce057b28e59, type: 3}
   spawnRadius: 10
   spawnAmount: 1
   spawnAmount_increaseInterval: 10

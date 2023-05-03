@@ -52,7 +52,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c17a0f464f8e37742b6e614043d31136, type: 2}
+  - {fileID: 2100000, guid: 9c91d9effd8542148b2eb2d8ff93fbf8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -137,10 +137,12 @@ MonoBehaviour:
   hurt_stunDuration: 0.5
   spawn_iFrame: 0
   myEnemyType: 1
+  shielded: 0
+  rotSpd: 2
   slimees:
   - {fileID: 6012079439936540206, guid: 975c68595533a2948b0e123bd1987e5f, type: 3}
   - {fileID: 6012079439936540206, guid: 975c68595533a2948b0e123bd1987e5f, type: 3}
-  slimee_spawnForce: 50
+  slimee_spawnForce: 75
   shoot_interval: 0
   shooter_stopDis: 0
   bulletPrefab: {fileID: 0}
@@ -153,7 +155,7 @@ MonoBehaviour:
   myImg: {fileID: 3905472576502912062}
   hurtMat: {fileID: 2100000, guid: 8e46cafe9e56a89499f93947b6fcb616, type: 2}
   flashDuration: 0.2
-  PS_blood: {fileID: 3094961534039290363, guid: 8b67ce8a0d0391244b32b5a3fb26cd74, type: 3}
+  PS_blood: {fileID: 3094961534039290363, guid: 1aee31874dba19146b478dd7a9691d42, type: 3}
   hurt_bulletTime_scale: 0.2
   hurt_bulletTime_duration: 0.2
   undying: 0
@@ -246,7 +248,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c17a0f464f8e37742b6e614043d31136, type: 2}
+  - {fileID: 2100000, guid: 9c91d9effd8542148b2eb2d8ff93fbf8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -4,25 +4,26 @@ using UnityEngine;
 
 public class SlashPathCollisionScript : MonoBehaviour
 {
-    public bool validity;
+    public bool valid;
     public Material matValid;
     public Material matInvalid;
-    private List<GameObject> enemiesInMe;
-    #region SINGLETON
-    public static SlashPathCollisionScript me;
-    private void Awake()
-    {
-        me = this;
-    }
-    #endregion
+    public List<GameObject> enemiesInMe;
+    public GameObject endOfPath;
     private void Start()
     {
         enemiesInMe = new();
     }
     private void Update()
     {
-        validity = enemiesInMe.Count > 0;
-        GetComponent<SpriteRenderer>().material = validity ? matValid : matInvalid;
+        if (transform.parent.GetComponent<SlashPathHolderScript>().fatherPath_holder == null)
+        {
+            valid = enemiesInMe.Count > 0;
+        }
+        else
+        {
+            valid = true;
+        }
+        GetComponent<SpriteRenderer>().material = valid ? matValid : matInvalid;
     }
     
     private void OnTriggerEnter2D(Collider2D collision) // record slashables inside the slash path
@@ -30,7 +31,10 @@ public class SlashPathCollisionScript : MonoBehaviour
         if (collision.CompareTag("Enemy") ||
             collision.CompareTag("Bullet"))
         {
-            enemiesInMe.Add(collision.gameObject);
+            {
+                enemiesInMe.Add(collision.gameObject);
+                ReflectionSlashScript.me.endOfPathes.Add(endOfPath);
+            }
         }
     }
     private void OnTriggerExit2D(Collider2D collision) // take out enemies that exits the slash path
@@ -39,6 +43,10 @@ public class SlashPathCollisionScript : MonoBehaviour
             collision.CompareTag("Bullet"))
         {
             enemiesInMe.Remove(collision.gameObject);
+            if (ReflectionSlashScript.me.endOfPathes.Contains(endOfPath))
+            {
+                ReflectionSlashScript.me.endOfPathes.Remove(endOfPath);
+            }
         }
     }
     public int HowManyEnemiesIHit() // return enemies inside the slash path
