@@ -103,11 +103,16 @@ public class InteractionScript: MonoBehaviour
         ReflectionSlashScript.me.endOfPathes = ReflectionSlashScript.me.endOfPathes.Distinct().ToList();
         foreach (var activePath in ReflectionSlashScript.me.currentlyActivePaths)
         {
-            SlashPathCollisionScript activeSpcs = activePath.GetComponent<SlashPathHolderScript>().myImage.GetComponent<SlashPathCollisionScript>();
-            if (activeSpcs.valid)
+            if (activePath.GetComponent<SlashPathHolderScript>()!=null)
             {
-                ReflectionSlashScript.me.targetPoses.Add(activeSpcs.endOfPath.transform.position);
+                SlashPathCollisionScript activeSpcs = activePath.GetComponent<SlashPathHolderScript>().myImage.GetComponent<SlashPathCollisionScript>();
+                if (activeSpcs.valid)
+                {
+                    ReflectionSlashScript.me.targetPoses.Add(activeSpcs.endOfPath.transform.position);
+                }
             }
+            
+            
         }
         imageSlashPath.SetActive(false);
         aimArea.SetActive(false);

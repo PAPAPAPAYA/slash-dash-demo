@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -89,10 +90,19 @@ public class GameManager : MonoBehaviour
             gameMode = GameMode.slingshot;
             InteractionScript.me.MakeSils();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))//add a switch for phone
         {
             gameMode = GameMode.forward;
             InteractionScript.me.DestroySils();
+        }
+
+        if (Input.touchCount ==1 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            if (Input.GetTouch(0).tapCount ==2)
+            {
+                gameMode = GameMode.forward;
+                InteractionScript.me.DestroySils();
+            }
         }
     } 
     private void FeatureToggler() // toggle features
